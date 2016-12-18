@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;             //Enables the use of sleep(), which even though I know should be avoided is simple and works
 using System.Xml;                   //Enables the app to store and retrieve user settings 
@@ -420,18 +419,15 @@ namespace DIY_LEDS_V1
             int p = e.ProgressPercentage;
             if (command.Contains("Breathe"))
             {
-                int r, g, b;
+                Color temp;
+                int fadeAmount = (int)(p * 2.55);
                 if (!useNext)
                 {
-                    r = (int)(foreColor.R) * p / 100;
-                    g = (int)(foreColor.G) * p / 100;
-                    b = (int)(foreColor.B) * p / 100;
+                    temp = ColorMix(foreColor, Color.Black, fadeAmount);
                 }
                 else
                 {
-                    r = (int)(backColor.R) * p / 100;
-                    g = (int)(backColor.G) * p / 100;
-                    b = (int)(backColor.B) * p / 100;
+                    temp = ColorMix(backColor, Color.Black, fadeAmount);
                 }
                 if (command.Contains("Rainbow"))
                 {
@@ -442,7 +438,7 @@ namespace DIY_LEDS_V1
                 }
                 else
                 {
-                    calcColor = Color.FromArgb(r, g, b);
+                    calcColor = temp;
                 }
                 //Console.WriteLine(p.ToString() + "    " + r.ToString() + "  " + g.ToString() + "  " + b.ToString());
             }
@@ -465,16 +461,9 @@ namespace DIY_LEDS_V1
             ///////////////////////////////////////////////////////////////
             if (command.Contains("Fade"))
             {
-                if (!useNext)
-                {
-                    Color temp = ColorFader(ForeColor, pixel1.BackColor,10);
-                    SetAllPixels(temp);
-                }
-                else
-                {
-                    Color temp = ColorFader(ForeColor, pixel1.BackColor, 10);
-                    SetAllPixels(temp);
-                }
+                int fadeAmount = (int) (p * 2.55);
+                Color temp = ColorMix(backColor, foreColor, fadeAmount);
+                SetAllPixels(temp);
             }
             ///////////////////////////////////////////////////////////////
             if (command.Contains("Switching"))
@@ -862,7 +851,7 @@ namespace DIY_LEDS_V1
             }
         }
 
-        private Color ColorMixer(Color c1, Color c2)
+        private Color ColorAverage(Color c1, Color c2)
         {
             int r1, g1, b1, r2, g2, b2, r3, g3, b3;
             r1 = c1.R;
@@ -877,28 +866,29 @@ namespace DIY_LEDS_V1
             return Color.FromArgb(r3, g3, b3);
         }
 
-        private Color ColorFader(Color mainColor, Color secondColor, int mixAmount)
+        private Color ColorMix(Color secondColor, Color mainColor, int mixAmount)
         {
-            int r1, g1, b1, r2, g2, b2;
+            int r1, g1, b1, r2, g2, b2; //Separate the RGB components of the colors to work with them 
             r1 = mainColor.R;
             g1 = mainColor.G;
             b1 = mainColor.B;
             r2 = secondColor.R;
             g2 = secondColor.G;
             b2 = secondColor.B;
-            if (r1 != r2)
+
+            if (r1 != r2)       //Start with the red, if its the same for both colors, no need to do anyhitng
             {
-                if (r1 > r2)
+                if (r1 > r2)        //If the red from the secondary color is greater than the red from the main color, reduce the red value by the specifed amount
                 {
                     for (int i = 0; i < mixAmount; i++)
                     {
                         r1--;
-                        if (r1 == r2) break;
+                        if (r1 == r2) break;        //If the two colors end up matching before the cycle ends, get out of the cycle to prevent color distortions
                     }
                 }
                 else
                 {
-                    if (r1 < r2)
+                    if (r1 < r2)        //If the red from the secondary color is lower than the red from the primary color, increase the red value by the specifed amount
                     {
                         for (int i = mixAmount; i > 0; i--)
                         {
@@ -909,7 +899,7 @@ namespace DIY_LEDS_V1
                 }
             }
             ////////////////////////////////////////////////////////////////////////////
-            if (g1 != g2)
+            if (g1 != g2)       //The exact same process aplies for the green component
             {
                 if (g1 > g2)
                 {
@@ -932,7 +922,7 @@ namespace DIY_LEDS_V1
                 }
             }
             ////////////////////////////////////////////////////////////////////////////
-            if (b1 != b2)
+            if (b1 != b2)           //The exact same process aplies for the blue component
             {
                 if (b1 > b2)
                 {
@@ -955,27 +945,27 @@ namespace DIY_LEDS_V1
                 }
             }
             
-            r1 = constrain(r1, 0, 255);
+            r1 = constrain(r1, 0, 255); //Make sure the RGB components are within the valid range --> 0-255
             g1 = constrain(g1, 0, 255);
             b1 = constrain(b1, 0, 255);
-            return Color.FromArgb(r1, g1, b1);
+            return Color.FromArgb(r1, g1, b1); //return the resulting color
         }
 
         private void fadeAllPixels(Color x, int fadeby)
         {
-            pixel1.BackColor = ColorFader(pixel1.BackColor, x, fadeby);
-            pixel2.BackColor = ColorFader(pixel2.BackColor, x, fadeby);
-            pixel3.BackColor = ColorFader(pixel3.BackColor, x, fadeby);
-            pixel4.BackColor = ColorFader(pixel4.BackColor, x, fadeby);
-            pixel5.BackColor = ColorFader(pixel5.BackColor, x, fadeby);
-            pixel6.BackColor = ColorFader(pixel6.BackColor, x, fadeby);
-            pixel7.BackColor = ColorFader(pixel7.BackColor, x, fadeby);
-            pixel8.BackColor = ColorFader(pixel8.BackColor, x, fadeby);
-            pixel9.BackColor = ColorFader(pixel9.BackColor, x, fadeby);
-            pixel10.BackColor = ColorFader(pixel10.BackColor, x, fadeby);
+            pixel1.BackColor = ColorMix(x, pixel1.BackColor, fadeby);
+            pixel2.BackColor = ColorMix(x, pixel2.BackColor, fadeby);
+            pixel3.BackColor = ColorMix(x, pixel3.BackColor, fadeby);
+            pixel4.BackColor = ColorMix(x, pixel4.BackColor, fadeby);
+            pixel5.BackColor = ColorMix(x, pixel5.BackColor, fadeby);
+            pixel6.BackColor = ColorMix(x, pixel6.BackColor, fadeby);
+            pixel7.BackColor = ColorMix(x, pixel7.BackColor, fadeby);
+            pixel8.BackColor = ColorMix(x, pixel8.BackColor, fadeby);
+            pixel9.BackColor = ColorMix(x, pixel9.BackColor, fadeby);
+            pixel10.BackColor = ColorMix(x, pixel10.BackColor, fadeby);
         }
 
-        private int constrain(int input,int min, int max)
+        private int constrain(int input, int min, int max)
         {
             if (input > max)
             {
@@ -1015,21 +1005,21 @@ namespace DIY_LEDS_V1
             xmlDoc.Save("userInfo.xml");
         }
 
-        private void safeAsync(BackgroundWorker a, bool b)
+        private void safeAsync(BackgroundWorker worker, bool status)
         {
-            if (a.IsBusy && b)
+            if (worker.IsBusy && status)
             {
 
             }
-            if (a.IsBusy && !b)
+            if (worker.IsBusy && !status)
             {
-                a.CancelAsync();
+                worker.CancelAsync();
             }
-            if (!a.IsBusy && b)
+            if (!worker.IsBusy && status)
             {
-                a.RunWorkerAsync();
+                worker.RunWorkerAsync();
             }
-            if (!a.IsBusy && !b)
+            if (!worker.IsBusy && !status)
             {
 
             }
@@ -1125,21 +1115,21 @@ namespace DIY_LEDS_V1
             setControls();
         }
 
-        private void safePortOpenClose(SerialPort port, bool action)
+        private void safePortOpenClose(SerialPort port, bool status)
         {
-            if (port.IsOpen && action)
+            if (port.IsOpen && status)
             {
 
             }
-            if (port.IsOpen && !action)
+            if (port.IsOpen && !status)
             {
                 port.Close();
             }
-            if (!port.IsOpen && !action)
+            if (!port.IsOpen && !status)
             {
 
             }
-            if (!port.IsOpen && action)
+            if (!port.IsOpen && status)
             {
                 port.Open();
             }
@@ -1149,7 +1139,7 @@ namespace DIY_LEDS_V1
             try{
                 safePortOpenClose(port,true);
                 port.Write(text);
-                Console.WriteLine(text);
+                //Console.WriteLine(text);
                 String received = null;
                 port.ReadTimeout = 100;
 
@@ -1168,7 +1158,7 @@ namespace DIY_LEDS_V1
             }
             catch (System.IO.IOException)
             {
-                //MessageBox.Show(this, "The LED controller could not be reached. Make sure the harware is properly set up", "Hardware Error",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, "The LED controller could not be reached. Make sure the harware is properly set up", "Hardware Error",MessageBoxButtons.OK, MessageBoxIcon.Error);
                 LEDSfound = false;
                 safePortOpenClose(arduino, false);
                 return "IO exception";
@@ -1182,6 +1172,14 @@ namespace DIY_LEDS_V1
             if (arduino.IsOpen && addressable)
             {
                 WriteSerialCommand(arduino, "Pixel," + (pixel - 1) + "," + foreColor.R + "," + foreColor.G + "," + foreColor.B);
+            }
+        }
+
+        private void pixelSetColor2_Button_Click(object sender, EventArgs e)
+        {
+            if (arduino.IsOpen && addressable)
+            {
+                WriteSerialCommand(arduino, "Pixel," + (pixel - 1) + "," + backColor.R + "," + backColor.G + "," + backColor.B);
             }
         }
 
@@ -1245,14 +1243,6 @@ namespace DIY_LEDS_V1
                 throw new ArgumentOutOfRangeException();
             }
             pixel = number;
-        }
-
-        private void pixelSetColor2_Button_Click(object sender, EventArgs e)
-        {
-            if (arduino.IsOpen && addressable)
-            {
-                WriteSerialCommand(arduino, "Pixel," + (pixel - 1) + "," + backColor.R + "," + backColor.G + "," + backColor.B);
-            }
         }
 
         private void Default_Button_Click(object sender, EventArgs e)
