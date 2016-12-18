@@ -31,7 +31,7 @@ void setup() {
   fore_R = EEPROM.read(5);
   fore_G = EEPROM.read(6);
   fore_B = EEPROM.read(7);
-  Serial.println("Cmd:" + command + " RGB1:" + back_R + "," + back_G + "," + back_B + "," + " RGB2:" + fore_R + "," +  fore_G + "," + fore_B + " Rate:" + rate );
+  Serial.println("Cmd:" + command + " RGB1:" + fore_R + "," +  fore_G + "," + fore_B  + " RGB2:" + back_R + "," + back_G + "," + back_B + "," + " Rate:" + rate );
 }
 
 
@@ -153,7 +153,7 @@ void loop(){
   }
 
   if(command == "Color Fade"){
-    wait = rate*7;
+    wait = rate*3;
     unsigned long currentTime =  millis();
     if(currentTime - prevTime >= wait){
       prevTime = currentTime;
@@ -476,9 +476,9 @@ void ColorCycle(){
 }
 
 void ColorFade(){
-  if (val >= 255 || val <= 0){
+  if (val >= 300 || val <= 0){
     state++;
-    if (state == 2)
+    if (state >= 2)
     {
       state = 0;
     }
@@ -486,13 +486,29 @@ void ColorFade(){
   switch (state){
   case 0:
     for(int i = 0; i < NUM_LEDS; i++){
-      leds[i] = blend(leds[i],CRGB(fore_G, fore_R, fore_B),2);
+      //Serial.println("Before" + " RGB1:" + fore_R + "," +  fore_G + "," + fore_B  + " Pix::" + leds[i].red + "," + leds[i].green + "," + leds[i].blue );
+      if(fore_R > leds[i].green) leds[i].green++;
+      if(fore_R < leds[i].green) leds[i].green--;
+      ////////////////////////////////////////////////////////////
+      if(fore_G > leds[i].red) leds[i].red++;
+      if(fore_G < leds[i].red) leds[i].red--;
+      ////////////////////////////////////////////////////////////
+      if(fore_B > leds[i].blue) leds[i].blue++;
+      if(fore_B < leds[i].blue) leds[i].blue--;
+      //Serial.println("after" + " RGB1:" + fore_R + "," +  fore_G + "," + fore_B  + " Pix::" + leds[i].red + "," + leds[i].green + "," + leds[i].blue );
     }
     val++;
     break;
   case 1:
     for(int i = 0; i < NUM_LEDS; i++){
-      leds[i] = blend(leds[i],CRGB(back_G, back_R, back_B),2);
+      if(back_R > leds[i].green) leds[i].green++;
+      if(back_R < leds[i].green) leds[i].green--;
+      ////////////////////////////////////////////////////////////
+      if(back_G > leds[i].red) leds[i].red++;
+      if(back_G < leds[i].red) leds[i].red--;
+      ////////////////////////////////////////////////////////////
+      if(back_B > leds[i].blue) leds[i].blue++;
+      if(back_B < leds[i].blue) leds[i].blue--;
     }
     val--;
     break;
