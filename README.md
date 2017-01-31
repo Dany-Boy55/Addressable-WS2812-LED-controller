@@ -7,7 +7,7 @@ Open the .exe file within the App folder and you are ready to go!
 
 For those of you interested in the code, then the Visual Studio folder contains all the resources you need to open the solution on MS visual studio. Feel free to modify the app to your liking.
 
-New features on V1.4:
+New features on V1.4:                                                                                                 
 -Added the ability to connect to several LED controllers, not just the first one the app finds                                      
 -Added a new lighting effect: Color Rain. Random "dropplets" that fading into the backgorund color  								
 -You can now assign unique names to each controller in order to easily identify them when using more than one 						
