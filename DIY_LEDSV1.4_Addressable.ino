@@ -1,25 +1,28 @@
 #include <FastLED.h>
 #include <EEPROM.h>
 
-#define NUM_LEDS 24     //Replace this value with the numbers of leds on your strip. Note, some strips count 3 leds as a single segment, normally the ones operation at 12v
+#define NUM_LEDS 90     //Replace this value with the numbers of leds on your strip. Note, some strips count 3 leds as a single segment, normally the ones operation at 12v
+const String Device_Name = "Case Lights"; //**New in 1.4** now you can also assign a unique name to your device in oder to use multiple controllers at once. 
 #define DATA_PIN  2     //You can also chage the data pin for your led strip if you so desire
 
+#define BUTTON_PIN 3    //Choose which pin you want to use to connect a button to manually change the effect of the LEDS
+
 String command = "Off", prevcomd = "Off";
+CRGB foreColor, backColor;
 int hue, val = 1, state, pix = 0, rate = 5, back_R, back_G, back_B, fore_R, fore_G, fore_B;
-unsigned long prevTime = 0, wait = 100, prevHueTime;
+unsigned long prevTime = 0, wait = 100, prevHueTime, prevButTime;
 CRGBArray <NUM_LEDS> leds;
-String commandList[] = {"Off", "Fixed Color", "Color Fade", "Color Breathe", "Color Chase", "Color Chase Bounce", "Color Cycle", "Color Switching", "Color Switching Bounce", "Rainbow", "Rainbow Breathe", "Rainbow Chase", "Rainbow Chase Bounce"};
+String commandList[] = {"Off", "Fixed Color", "Color Fade", "Color Breathe", "Color Chase", "Color Chase Bounce", "Color Cycle", 
+                        "Color Switching", "Color Switching Bounce", "Rainbow", "Rainbow Breathe", "Rainbow Chase", "Color Rain", 
+                        "Rainbow Chase Bounce", "Custom Pattern", "Pixel"};
 
 
 void setup() { 
   FastLED.addLeds <WS2812, DATA_PIN> (leds, NUM_LEDS); 
-  FastLED.setBrightness(70);
+  FastLED.setBrightness(100);
   Serial.begin(19200);
   Serial.setTimeout(50);
-  ///////////////////////////////////////////////////////
-  Serial.print("WS2812 LED controller V1.3, LEDS:");
-  Serial.print(NUM_LEDS);
-  Serial.println("\n");
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
   //////////////////////////////////////////////////////
   int memValue = EEPROM.read(0);
   command = commandList[memValue];
@@ -31,57 +34,68 @@ void setup() {
   fore_R = EEPROM.read(5);
   fore_G = EEPROM.read(6);
   fore_B = EEPROM.read(7);
-  Serial.println("Cmd:" + command + " RGB1:" + fore_R + "," +  fore_G + "," + fore_B  + " RGB2:" + back_R + "," + back_G + "," + back_B + "," + " Rate:" + rate );
+  foreColor = CRGB(fore_R, fore_G, fore_B);
+  backColor = CRGB(back_R, back_G, back_B);
 }
 
 
 void loop(){  
   
-  if(Serial.available() > 1){
+  if(Serial.available() > 0){
     char a = ',';
-    command = Serial.readStringUntil(a);
-    //////////
-    if(command == "id"){
-      Serial.print("WS2812,V1.3,LEDS:");
+    String input = Serial.readStringUntil(a);
+    
+    for(int i = 0; i < sizeof(commandList); i++){
+      if(input == commandList[i]){
+        command = input;
+        SerialConfirm();
+      }
+    }
+    ////////////////////////////////////////////////////////////
+    if(input == "id"){
+      Serial.print("1.4,addressable," + Device_Name + ",");   //Order:Version, Addressable/Simple, ControllerName, LedNumber
       Serial.print(NUM_LEDS);
       Serial.println("\n");
       command = prevcomd;
     }else{
-      if(command == "Color1"){
+      if(input == "Color1"){
+        SerialConfirm();
         fore_R = Serial.parseInt();
         fore_G = Serial.parseInt();
         fore_B = Serial.parseInt();
         fore_R = constrain(fore_R,0,255);
         fore_G = constrain(fore_G,0,255);
-        fore_B = constrain(fore_B,0,255);
-        command = prevcomd;
-        SerialConfirm();
+        fore_B = constrain(fore_B,0,255);   
+        foreColor = CRGB(fore_R, fore_G, fore_B);             
       }else{
-        if(command == "Color2"){
+        if(input == "Color2"){
+          SerialConfirm();
           back_R = Serial.parseInt();
           back_G = Serial.parseInt();
           back_B = Serial.parseInt();
           back_R = constrain(back_R,0,255);
           back_G = constrain(back_G,0,255);
           back_B = constrain(back_B,0,255);
-          command = prevcomd;
-          SerialConfirm();
+          backColor = CRGB(back_R, back_G, back_B);       
         }else{
-          if(command == "Rate"){
-          rate = Serial.parseInt();
-          rate = constrain(rate,1,20);
-          SerialConfirm();
-          command = prevcomd;      
+          if(input == "Rate"){
+            SerialConfirm();
+            rate = Serial.parseInt();
+            rate = constrain(rate,1,20);             
           }
         }
       }
     }
-    if(command == "Off" || command == "Fixed Color" || command == "Color Breathe" || command == "Color Switch" || command == "Color Chase" || command =="Color Chase Bounce" || command == "Rainbow" || command == "Rainbow Breathe" || command == "Rainbow Chase" || command == "Color Cycle" || command == "Custom Pattern"){
-      SerialConfirm();
+    
+    if(input == "Get Data"){
+      Serial.println(prevcomd + "," + fore_R + "," +  fore_G + "," + fore_B  + "," + back_R + "," + back_G + "," + back_B + ","
+      + rate );
+      command = prevcomd;
     }
+    
     if(command == "Pixel"){
       pix = Serial.parseInt();
-      pix = constrain(pix, 0, (NUM_LEDS - 1));
+      pix = constrain(pix, 0, NUM_LEDS);
       fore_R = Serial.parseInt();
       fore_G = Serial.parseInt();
       fore_B = Serial.parseInt();
@@ -91,8 +105,10 @@ void loop(){
       Serial.flush();
       Serial.println("OK\n"); 
     }
-    if(command == "Save Default"){
+    
+    if(input == "Save Default"){
       SerialConfirm();
+      command = prevcomd;
       int memVal;
       for(int i = 0; i < sizeof(commandList); i++){
         if(prevcomd == commandList[i]){
@@ -109,16 +125,31 @@ void loop(){
       EEPROM.update(4, back_B);
       EEPROM.update(5, fore_R);
       EEPROM.update(6, fore_G);
-      EEPROM.update(7, fore_B);
-      command = prevcomd;
-      
+      EEPROM.update(7, fore_B);      
     }
+    Serial.flush();
   }
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   unsigned long hueTime =  millis();
     if(hueTime - prevHueTime >= (rate*5)){
       prevHueTime = hueTime;
       hue++;
+    }
+
+  unsigned long buttonTime =  millis();
+    if(buttonTime - prevButTime >= 200){
+      prevButTime = buttonTime;
+      if(!digitalRead(BUTTON_PIN)){
+        for(int i = 0; i < sizeof(commandList); i++){
+          if(command == commandList[i]){
+            command = commandList[i+1];
+            break;
+          }          
+        }
+        if(command == "Custom Pattern"){
+          command = "Off";
+        }
+      }
     }
   
   if(command == "Off"){
@@ -128,6 +159,10 @@ void loop(){
       prevTime = currentTime;
       Off();
     }
+  }
+
+  if(command == "Custom Pattern"){
+    fill_solid(leds, NUM_LEDS, CRGB(0,0,0));
   }
   
   if(command == "Fixed Color"){
@@ -149,6 +184,15 @@ void loop(){
     if(currentTime - prevTime >= wait){
       prevTime = currentTime;
       ColorChase();
+    }
+  }
+
+  if(command == "Color Rain"){
+    wait = rate*6;
+    unsigned long currentTime =  millis();
+    if(currentTime - prevTime >= wait){
+      prevTime = currentTime;
+      ColorRain();
     }
   }
 
@@ -244,16 +288,17 @@ void SerialConfirm(){
   state = 0;
   pix = 0;
   Serial.flush(); 
-  Serial.println("OK\n");  
-  }
+  Serial.print("OK\n");  
+}
 
 void Off(){
   leds.fadeToBlackBy(2);
   FastLED.show();
   prevcomd = "Off";
 }
+
 void FixedColor(){
-  setAllColor1();
+  fill_solid(leds, NUM_LEDS, foreColor);
   prevcomd = "Fixed Color";
 }
 
@@ -467,6 +512,16 @@ void RainbowChaseBounce(){
   leds[pix] = CHSV(hue, 255, 255);
   FastLED.show();  
   prevcomd = "Rainbow Chase Bounce";
+}
+
+void ColorRain(){
+  for(int i = 0; i < NUM_LEDS; i++){
+    leds[i] = blend(leds[i],CRGB(back_G,back_R,back_B),20);
+  }
+  pix = random(0, NUM_LEDS);
+  leds[pix] = CRGB(fore_G, fore_R, fore_B);
+  FastLED.show();
+  prevcomd = "Color Rain";
 }
 
 void ColorCycle(){
