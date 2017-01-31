@@ -1,9 +1,0 @@
-C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Controller_Window.resources
-C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Properties.Resources.resources
-C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.csproj.GenerateResource.Cache
-C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.csprojResolveAssemblyReference.cache
-C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\bin\Release\DIY Smart LEDS v1.2.exe.config
-C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\bin\Release\DIY Smart LEDS v1.2.exe
-C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\bin\Release\DIY Smart LEDS v1.2.pdb
-C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\obj\Release\DIY Smart LEDS v1.2.exe
-C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\obj\Release\DIY Smart LEDS v1.2.pdb
