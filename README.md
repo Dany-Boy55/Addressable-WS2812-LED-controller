@@ -1,5 +1,5 @@
-# DIY-Smart-LEDs
-An arduino + windows project to control addressable led strips with ease. Instructables coming soon
+# LED controller
+An arduino + windows project to control led strips with ease. Instructables coming soon
 
 If your intent is to simply download and use, then you want to get the .ino sketch for the arduino and the App.zip folder. 
 Install the FastLED library into your arduino IDE and upload the sketch. Make necessary adjustments to the sketch.
@@ -15,5 +15,9 @@ New features on V1.4:
 * Fixed a bug that would cause CPU usage to rise dramatically when selecting "Off" or "Fixed Color"
 * Added the option to cycle through effects with a pysical button without the need of using a PC
 * The app is more reliable when sending commands to the controller
+
+New features on V1.5:
+* Added "Color Gradient" and "Color Fade" effects
+* Improved stability for the arduino sketch and fixed some overflow errors
 
 Thanks for checking this project out! If you have any ideas for improvements or more features, let me know!
