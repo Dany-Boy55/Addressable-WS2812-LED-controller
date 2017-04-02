@@ -1,0 +1,27 @@
+C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1.3\DIY_LEDS_V1\bin\Release\DIY Smart LEDS v1.2.exe.config
+C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1.3\DIY_LEDS_V1\bin\Release\DIY Smart LEDS v1.2.exe
+C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1.3\DIY_LEDS_V1\bin\Release\DIY Smart LEDS v1.2.pdb
+C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1.3\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.3.csprojResolveAssemblyReference.cache
+C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1.3\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Controller_Window.resources
+C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1.3\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Properties.Resources.resources
+C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1.3\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.3.csproj.GenerateResource.Cache
+C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1.3\DIY_LEDS_V1\obj\Release\DIY Smart LEDS v1.2.exe
+C:\Users\Daniel\Documents\Visual Studio 2013\Projects\DIY_LEDS_V1.3\DIY_LEDS_V1\obj\Release\DIY Smart LEDS v1.2.pdb
+G:\DIY_LEDS_V1.3\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.3.csprojResolveAssemblyReference.cache
+G:\DIY_LEDS_V1.3\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Controller_Window.resources
+G:\DIY_LEDS_V1.3\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Properties.Resources.resources
+G:\DIY_LEDS_V1.3\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.3.csproj.GenerateResource.Cache
+G:\DIY_LEDS_V1.3\DIY_LEDS_V1\bin\Release\DIY Smart LEDS v1.4.exe.config
+G:\DIY_LEDS_V1.3\DIY_LEDS_V1\bin\Release\DIY Smart LEDS v1.4.exe
+G:\DIY_LEDS_V1.3\DIY_LEDS_V1\bin\Release\DIY Smart LEDS v1.4.pdb
+G:\DIY_LEDS_V1.3\DIY_LEDS_V1\obj\Release\DIY Smart LEDS v1.4.exe
+G:\DIY_LEDS_V1.3\DIY_LEDS_V1\obj\Release\DIY Smart LEDS v1.4.pdb
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\bin\Release\DIY Smart LEDS v1.4.exe.config
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\obj\Release\DIY Smart LEDS v1.4.exe
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\obj\Release\DIY Smart LEDS v1.4.pdb
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\bin\Release\DIY Smart LEDS v1.4.exe
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\bin\Release\DIY Smart LEDS v1.4.pdb
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.3.csprojResolveAssemblyReference.cache
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Controller_Window.resources
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Properties.Resources.resources
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.3.csproj.GenerateResource.Cache

@@ -1,0 +1,50 @@
+H:\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.exe.config
+H:\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.exe.manifest
+H:\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.application
+H:\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.exe
+H:\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.pdb
+H:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Controller_Window.resources
+H:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Properties.Resources.resources
+H:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.5.csproj.GenerateResource.Cache
+H:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.TrustInfo.xml
+H:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.exe.manifest
+H:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.application
+H:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.exe
+H:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.pdb
+G:\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.exe.config
+G:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.exe
+G:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.pdb
+H:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.5.csprojResolveAssemblyReference.cache
+C:\Users\Daniel\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.exe.config
+C:\Users\Daniel\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.exe
+C:\Users\Daniel\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.pdb
+C:\Users\Daniel\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.exe.manifest
+C:\Users\Daniel\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.application
+C:\Users\Daniel\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.exe
+C:\Users\Daniel\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.pdb
+C:\Users\Daniel\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.5.csprojResolveAssemblyReference.cache
+C:\Users\Daniel\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Controller_Window.resources
+C:\Users\Daniel\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Properties.Resources.resources
+C:\Users\Daniel\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.5.csproj.GenerateResource.Cache
+C:\Users\Daniel\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.TrustInfo.xml
+C:\Users\Daniel\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.exe.manifest
+C:\Users\Daniel\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.application
+G:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.5.csprojResolveAssemblyReference.cache
+G:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Controller_Window.resources
+G:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Properties.Resources.resources
+G:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.5.csproj.GenerateResource.Cache
+G:\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.TrustInfo.xml
+C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.exe.config
+C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.exe
+C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.pdb
+C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.5.csprojResolveAssemblyReference.cache
+C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Controller_Window.resources
+C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Properties.Resources.resources
+C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.5.csproj.GenerateResource.Cache
+C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.TrustInfo.xml
+C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.exe.manifest
+C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.application
+C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.exe
+C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.pdb
+C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.exe.manifest
+C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.application

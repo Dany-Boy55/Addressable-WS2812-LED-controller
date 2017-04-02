@@ -1,20 +1,20 @@
 #include <FastLED.h>
 #include <EEPROM.h>
 
-#define NUM_LEDS 90     //Replace this value with the numbers of leds on your strip. Note, some strips count 3 leds as a single segment, normally the ones operation at 12v
+#define NUM_LEDS 80     //Replace this value with the numbers of leds on your strip. Note, some strips count 3 leds as a single segment, normally the ones operation at 12v
 const String Device_Name = "Case Lights"; //**New in 1.4** now you can also assign a unique name to your device in oder to use multiple controllers at once. 
 #define DATA_PIN  2     //You can also chage the data pin for your led strip if you so desire
 
 #define BUTTON_PIN 3    //Choose which pin you want to use to connect a button to manually change the effect of the LEDS
 
 String command = "Off", prevcomd = "Off";
-CRGB foreColor, backColor;
-int hue, val = 1, state, pix = 0, rate = 5, back_R, back_G, back_B, fore_R, fore_G, fore_B;
+CRGB foreColor, backColor, calcColor;
+int hue, val = 1, state, pix = 0, rate = 5;
 unsigned long prevTime = 0, wait = 100, prevHueTime, prevButTime;
 CRGBArray <NUM_LEDS> leds;
-String commandList[] = {"Off", "Fixed Color", "Color Fade", "Color Breathe", "Color Chase", "Color Chase Bounce", "Color Cycle", 
+const String commandList[] = {"Off", "Fixed Color", "Color Fade", "Color Breathe", "Color Chase", "Color Chase Bounce", "Color Cycle", 
                         "Color Switching", "Color Switching Bounce", "Rainbow", "Rainbow Breathe", "Rainbow Chase", "Color Rain", 
-                        "Rainbow Chase Bounce", "Custom Pattern", "Pixel"};
+                        "Rainbow Chase Bounce", "Color Gradient", "Fill", "Rainbow Fill", "Custom Pattern", "Pixel"};
 
 
 void setup() { 
@@ -24,18 +24,16 @@ void setup() {
   Serial.setTimeout(50);
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   //////////////////////////////////////////////////////
-  int memValue = EEPROM.read(0);
-  command = commandList[memValue];
+  int commandIndex = EEPROM.read(0);
+  command = commandList[commandIndex];
   prevcomd = command;
-  rate = EEPROM.read(1);
-  back_R = EEPROM.read(2);
-  back_G = EEPROM.read(3);
-  back_B = EEPROM.read(4);
-  fore_R = EEPROM.read(5);
-  fore_G = EEPROM.read(6);
-  fore_B = EEPROM.read(7);
-  foreColor = CRGB(fore_R, fore_G, fore_B);
-  backColor = CRGB(back_R, back_G, back_B);
+  int rate = EEPROM.read(1);
+  foreColor.red = EEPROM.read(2);
+  foreColor.green = EEPROM.read(3);
+  foreColor.blue = EEPROM.read(4);
+  backColor.red = EEPROM.read(5);
+  backColor.green = EEPROM.read(6);
+  backColor.blue = EEPROM.read(7);  
 }
 
 
@@ -60,50 +58,46 @@ void loop(){
     }else{
       if(input == "Color1"){
         SerialConfirm();
-        fore_R = Serial.parseInt();
-        fore_G = Serial.parseInt();
-        fore_B = Serial.parseInt();
-        fore_R = constrain(fore_R,0,255);
-        fore_G = constrain(fore_G,0,255);
-        fore_B = constrain(fore_B,0,255);   
-        foreColor = CRGB(fore_R, fore_G, fore_B);             
+        foreColor.red = Serial.parseInt();
+        foreColor.green = Serial.parseInt();
+        foreColor.blue = Serial.parseInt();        
       }else{
         if(input == "Color2"){
           SerialConfirm();
-          back_R = Serial.parseInt();
-          back_G = Serial.parseInt();
-          back_B = Serial.parseInt();
-          back_R = constrain(back_R,0,255);
-          back_G = constrain(back_G,0,255);
-          back_B = constrain(back_B,0,255);
-          backColor = CRGB(back_R, back_G, back_B);       
+          backColor.red = Serial.parseInt();
+          backColor.green = Serial.parseInt();
+          backColor.blue = Serial.parseInt();
         }else{
           if(input == "Rate"){
             SerialConfirm();
             rate = Serial.parseInt();
-            rate = constrain(rate,1,20);             
+            rate = constrain(rate,1,50);             
           }
         }
       }
     }
     
-    if(input == "Get Data"){
-      Serial.println(prevcomd + "," + fore_R + "," +  fore_G + "," + fore_B  + "," + back_R + "," + back_G + "," + back_B + ","
-      + rate );
+    if(input == "Read"){
+      Serial.println(prevcomd + "," + foreColor.red + "," +  foreColor.green + "," + foreColor.blue  + "," + backColor.red + "," + backColor.green + "," + backColor.blue + ","
+      + rate + "\n");
       command = prevcomd;
     }
     
     if(command == "Pixel"){
       pix = Serial.parseInt();
       pix = constrain(pix, 0, NUM_LEDS);
-      fore_R = Serial.parseInt();
-      fore_G = Serial.parseInt();
-      fore_B = Serial.parseInt();
-      fore_R = constrain(fore_R,0,255);
-      fore_G = constrain(fore_G,0,255);
-      fore_B = constrain(fore_B,0,255);
+      int r = Serial.parseInt();
+      int g = Serial.parseInt();
+      int b = Serial.parseInt();
+      r = constrain(r,0,255);
+      g = constrain(g,0,255);
+      b = constrain(b,0,255);
       Serial.flush();
       Serial.println("OK\n"); 
+    }
+
+    if(command == "Fill" || command == "Rainbow Fill"){
+      pix = Serial.parseInt();
     }
     
     if(input == "Save Default"){
@@ -120,12 +114,12 @@ void loop(){
       }
       EEPROM.update(0, memVal);
       EEPROM.update(1, rate);
-      EEPROM.update(2, back_R);
-      EEPROM.update(3, back_G);
-      EEPROM.update(4, back_B);
-      EEPROM.update(5, fore_R);
-      EEPROM.update(6, fore_G);
-      EEPROM.update(7, fore_B);      
+      EEPROM.update(2, foreColor.red);
+      EEPROM.update(3, foreColor.green);
+      EEPROM.update(4, foreColor.blue);
+      EEPROM.update(5, backColor.red);
+      EEPROM.update(6, backColor.green);
+      EEPROM.update(7, backColor.blue);
     }
     Serial.flush();
   }
@@ -161,6 +155,18 @@ void loop(){
     }
   }
 
+  if(command == "Fill"){
+    fill_solid(leds, NUM_LEDS, CRGB(0,0,0));
+    fill_solid(leds, pix, foreColor);
+    FastLED.show();
+  }
+
+  if(command == "Rainbow Fill"){    
+    fill_solid(leds, NUM_LEDS, CRGB(0,0,0));
+    fill_rainbow(leds, pix, hue, 5);
+    FastLED.show();
+  }
+  
   if(command == "Custom Pattern"){
     fill_solid(leds, NUM_LEDS, CRGB(0,0,0));
   }
@@ -179,7 +185,7 @@ void loop(){
   }
 
   if(command == "Color Chase"){
-    wait = rate*15;
+    wait = rate*2 + 6;
     unsigned long currentTime =  millis();
     if(currentTime - prevTime >= wait){
       prevTime = currentTime;
@@ -188,7 +194,7 @@ void loop(){
   }
 
   if(command == "Color Rain"){
-    wait = rate*6;
+    wait = rate*2 + 10;
     unsigned long currentTime =  millis();
     if(currentTime - prevTime >= wait){
       prevTime = currentTime;
@@ -197,7 +203,7 @@ void loop(){
   }
 
   if(command == "Color Fade"){
-    wait = rate*3;
+    wait = rate;
     unsigned long currentTime =  millis();
     if(currentTime - prevTime >= wait){
       prevTime = currentTime;
@@ -206,7 +212,7 @@ void loop(){
   }
 
   if(command == "Color Chase Bounce"){
-    wait = rate*15;
+    wait = rate*2 + 6;
     unsigned long currentTime =  millis();
     if(currentTime - prevTime >= wait){
       prevTime = currentTime;
@@ -215,7 +221,7 @@ void loop(){
   }
   
   if(command == "Color Switching"){
-    wait = rate*15;
+    wait = rate*2;
     unsigned long currentTime =  millis();
     if(currentTime - prevTime >= wait){
       prevTime = currentTime;
@@ -224,16 +230,25 @@ void loop(){
   }
 
   if(command == "Color Switching Bounce"){
-    wait = rate*15;
+    wait = rate*2;
     unsigned long currentTime =  millis();
     if(currentTime - prevTime >= wait){
       prevTime = currentTime;
       ColorSwitchBounce();
     }
   }
+
+  if(command == "Color Gradient"){
+  wait = rate*10;
+    unsigned long currentTime =  millis();
+    if(currentTime - prevTime >= wait){
+      prevTime = currentTime;      
+      ColorGradient(); 
+    } 
+  }
   
   if(command == "Rainbow"){
-    wait = rate*10;
+    wait = rate*3;
     unsigned long currentTime =  millis();
     if(currentTime - prevTime >= wait){
       prevTime = currentTime;
@@ -251,7 +266,7 @@ void loop(){
   }
   
   if(command == "Rainbow Chase"){
-    wait = rate*15;
+    wait = rate*2 + 6;
     unsigned long currentTime =  millis();
     if(currentTime - prevTime >= wait){
       prevTime = currentTime;
@@ -260,7 +275,7 @@ void loop(){
   }
   
   if(command == "Rainbow Chase Bounce"){
-    wait = rate*15;
+    wait = rate*2 + 6;
     unsigned long currentTime =  millis();
     if(currentTime - prevTime >= wait){
       prevTime = currentTime;
@@ -269,7 +284,7 @@ void loop(){
   }
   
   if(command == "Color Cycle"){
-    wait = rate*10;
+    wait = rate*2;
     unsigned long currentTime =  millis();
     if(currentTime - prevTime >= wait){
       prevTime = currentTime;
@@ -291,6 +306,34 @@ void SerialConfirm(){
   Serial.print("OK\n");  
 }
 
+int GetHue(CRGB workColor){         //This function attempts to get the hue value of a CRGB color object, still in progress :(
+  byte resultHue;
+  byte minComponent = min(workColor.red, workColor.green);
+  minComponent = min(minComponent, workColor.blue);
+  byte maxComponent = max(workColor.red, workColor.green);
+  maxComponent = max(maxComponent, workColor.blue);
+  byte delta = maxComponent - minComponent;
+  
+  if(delta == 0){
+    return 0;
+  }
+  if(maxComponent == workColor.red){
+    resultHue = (workColor.green - workColor.blue)/delta;
+  }else if(maxComponent == workColor.green){
+    resultHue = (workColor.blue - workColor.red)/delta;
+  }else{
+    resultHue = (workColor.red - workColor.green)/delta;
+  }
+  return resultHue * 42;
+}
+
+void ColorGradient(){
+  fill_gradient_RGB(leds, NUM_LEDS/2, foreColor, backColor);
+  fill_gradient_RGB(leds, NUM_LEDS/2, backColor, NUM_LEDS, foreColor);
+  FastLED.show();
+  prevcomd = "Color Gradient";
+}
+
 void Off(){
   leds.fadeToBlackBy(2);
   FastLED.show();
@@ -299,61 +342,56 @@ void Off(){
 
 void FixedColor(){
   fill_solid(leds, NUM_LEDS, foreColor);
+  FastLED.show();
   prevcomd = "Fixed Color";
 }
 
 void ColorBreathe(){
-  int red, green, blue;
-  if (val >= 255 || val <= 0){
+  if (val >= 100){
     state++;
+    val = 0;
     if (state == 4)
     {
       state = 0;
     }
   }
+  
   switch (state){
-  case 0:
-    red = map(fore_R, 0, 255, 0, val);
-    green = map(fore_G, 0, 255, 0, val);
-    blue = map(fore_B, 0, 255, 0, val);
-    fill_solid(leds, NUM_LEDS, CRGB(green, red, blue));
-    val++;
-    break;
-  case 1:
-    red = map(fore_R, 0, 255, 0, val);
-    green = map(fore_G, 0, 255, 0, val);
-    blue = map(fore_B, 0, 255, 0, val);
-    fill_solid(leds, NUM_LEDS, CRGB(green, red, blue));
-    val--;
-    break;
-  case 2:
-    red = map(back_R, 0, 255, 0, val);
-    green = map(back_G, 0, 255, 0, val);
-    blue = map(back_B, 0, 255, 0, val);
-    fill_solid(leds, NUM_LEDS, CRGB(green, red, blue));
-    val++;
-    break;
-  case 3:
-    red = map(back_R, 0, 255, 0, val);
-    green = map(back_G, 0, 255, 0, val);
-    blue = map(back_B, 0, 255, 0, val);
-    fill_solid(leds, NUM_LEDS, CRGB(green, red, blue));
-    val--;
-    break;
+    case 0:
+      for(int i = 0; i < NUM_LEDS; i++){
+        leds[i] = blend(leds[i],foreColor,5);
+      }
+      break;
+    case 1:
+      for(int i = 0; i < NUM_LEDS; i++){
+        leds[i].fadeToBlackBy(5);
+      }
+      break;
+    case 2:
+      for(int i = 0; i < NUM_LEDS; i++){
+        leds[i] = blend(leds[i],backColor,5);
+      }
+      break;
+    case 3:
+      for(int i = 0; i < NUM_LEDS; i++){
+        leds[i].fadeToBlackBy(5);
+      }
+      break;
   }
+  val++;
   FastLED.show();
   prevcomd = "Color Breathe";
 }
 
 void ColorChase(){
   for(int i = 0; i < NUM_LEDS; i++){
-    leds[i] = blend(leds[i],CRGB(back_G,back_R,back_B),65);
+    leds[i] = blend(leds[i],backColor,65);
   }
   if(pix >= NUM_LEDS)
   {
     pix = 0;
   }
-  leds[pix] = CRGB(fore_G,fore_R,fore_B);
+  leds[pix] = foreColor;
   FastLED.show();
   pix++;
   prevcomd = "Color Chase";
@@ -363,35 +401,35 @@ void ColorChase(){
 void ColorSwitchBounce(){
   if(state > 3){
     state = 0;
-  }  
-  switch (state){
-    case 0:
-      leds[pix] = CRGB(fore_G,fore_R,fore_B);
-      pix++;
-      break;
-    case 1:
-      leds[pix] = CRGB(back_G,back_R,back_B);
-      pix++;
-      break;
-    case 2:
-      leds[pix] = CRGB(fore_G,fore_R,fore_B);
-      pix--;
-      break;
-    case 3:
-      leds[pix] = CRGB(back_G,back_R,back_B);
-      pix--;
-      break;  
   }
   if(pix <= 0)
-  {
-    pix = NUM_LEDS;
-    state++;
-  }
-  if(pix >= NUM_LEDS)
   {
     pix = 0;
     state++;
   }
+  if(pix >= NUM_LEDS)
+  {
+    pix = NUM_LEDS - 1;
+    state++;
+  }
+  switch (state){
+    case 0:
+      leds[pix] = foreColor;
+      pix++;
+      break;
+    case 1:
+      leds[pix] = backColor;
+      pix--;
+      break;
+    case 2:
+      leds[pix] = foreColor;
+      pix++;
+      break;
+    case 3:
+      leds[pix] = backColor;
+      pix--;
+      break;  
+  }  
   FastLED.show();
   prevcomd = "Color Switching Bounce";
 }
@@ -402,11 +440,11 @@ void ColorSwitch(){
   }  
   switch (state){
     case 0:
-      leds[pix] = CRGB(fore_G,fore_R,fore_B);
+      leds[pix] = foreColor;
       pix++;
       break;
     case 1:
-      leds[pix] = CRGB(back_G,back_R,back_B);
+      leds[pix] = backColor;
       pix++;
       break;   
   }
@@ -421,7 +459,15 @@ void ColorSwitch(){
 
 void ColorChaseBounce(){
   for(int i = 0; i < NUM_LEDS; i++){
-    leds[i] = blend(leds[i],CRGB(back_G,back_R,back_B),65);
+    leds[i] = blend(leds[i],backColor,65);
+  }
+  switch(state){
+    case 0:
+      pix++;
+      break;
+    case 1:
+      pix--;
+      break;
   }
   if (pix >= NUM_LEDS){
     state = 1;
@@ -430,13 +476,8 @@ void ColorChaseBounce(){
   if (pix <= 0){
     state = 0;
     pix = 0;
-  }
-  if(state == 0){
-    pix++;
-  }else{
-    pix--;
-  }
-  leds[pix] = CRGB(fore_G,fore_R,fore_B);
+  }  
+  leds[pix] = foreColor;
   FastLED.show();  
   prevcomd = "Color Chase Bounce";
 }
@@ -451,7 +492,7 @@ void Rainbow(){
 void RainbowBreathe(){
   if (val >= 255 || val <= 0){
     state++;
-    if (state == 4)
+    if (state == 2)
     {
       state = 0;
     }
@@ -465,14 +506,6 @@ void RainbowBreathe(){
     fill_solid(leds, NUM_LEDS, CHSV(hue,255,val));
     val--;
     break;
-  case 2:
-    fill_solid(leds, NUM_LEDS, CHSV(hue,255,val));
-    val++;
-    break;
-  case 3:
-    fill_solid(leds, NUM_LEDS, CHSV(hue,255,val));
-    val--;
-    break;
   }
   FastLED.show();
   prevcomd = "Rainbow Breathe";
@@ -480,7 +513,7 @@ void RainbowBreathe(){
 
 void RainbowChase(){
   for(int i = 0; i < NUM_LEDS; i++){
-    leds[i] = blend(leds[i],CRGB(back_G,back_R,back_B),65);
+    leds[i] = blend(leds[i],backColor,65);
   }
   if(pix >= NUM_LEDS)
   {
@@ -494,7 +527,15 @@ void RainbowChase(){
 
 void RainbowChaseBounce(){
   for(int i = 0; i < NUM_LEDS; i++){
-    leds[i] = blend(leds[i],CRGB(back_G,back_R,back_B),65);
+    leds[i] = blend(leds[i],backColor,65);
+  }
+  switch(state){
+    case 0:
+      pix++;
+      break;
+    case 1:
+      pix--;
+      break;
   }
   if (pix >= NUM_LEDS){
     state = 1;
@@ -504,11 +545,6 @@ void RainbowChaseBounce(){
     state = 0;
     pix = 0;
   }
-  if(state == 0){
-    pix++;
-  }else{
-    pix--;
-  }
   leds[pix] = CHSV(hue, 255, 255);
   FastLED.show();  
   prevcomd = "Rainbow Chase Bounce";
@@ -516,10 +552,10 @@ void RainbowChaseBounce(){
 
 void ColorRain(){
   for(int i = 0; i < NUM_LEDS; i++){
-    leds[i] = blend(leds[i],CRGB(back_G,back_R,back_B),20);
+    leds[i] = blend(leds[i],backColor,20);
   }
   pix = random(0, NUM_LEDS);
-  leds[pix] = CRGB(fore_G, fore_R, fore_B);
+  leds[pix] = foreColor;
   FastLED.show();
   prevcomd = "Color Rain";
 }
@@ -531,63 +567,33 @@ void ColorCycle(){
 }
 
 void ColorFade(){
-  if (val >= 300 || val <= 0){
+  if (val >= 256){
     state++;
+    val = 0;
     if (state >= 2)
     {
       state = 0;
     }
   }
-  switch (state){
-  case 0:
-    for(int i = 0; i < NUM_LEDS; i++){
-      //Serial.println("Before" + " RGB1:" + fore_R + "," +  fore_G + "," + fore_B  + " Pix::" + leds[i].red + "," + leds[i].green + "," + leds[i].blue );
-      if(fore_R > leds[i].green) leds[i].green++;
-      if(fore_R < leds[i].green) leds[i].green--;
-      ////////////////////////////////////////////////////////////
-      if(fore_G > leds[i].red) leds[i].red++;
-      if(fore_G < leds[i].red) leds[i].red--;
-      ////////////////////////////////////////////////////////////
-      if(fore_B > leds[i].blue) leds[i].blue++;
-      if(fore_B < leds[i].blue) leds[i].blue--;
-      //Serial.println("after" + " RGB1:" + fore_R + "," +  fore_G + "," + fore_B  + " Pix::" + leds[i].red + "," + leds[i].green + "," + leds[i].blue );
-    }
-    val++;
-    break;
-  case 1:
-    for(int i = 0; i < NUM_LEDS; i++){
-      if(back_R > leds[i].green) leds[i].green++;
-      if(back_R < leds[i].green) leds[i].green--;
-      ////////////////////////////////////////////////////////////
-      if(back_G > leds[i].red) leds[i].red++;
-      if(back_G < leds[i].red) leds[i].red--;
-      ////////////////////////////////////////////////////////////
-      if(back_B > leds[i].blue) leds[i].blue++;
-      if(back_B < leds[i].blue) leds[i].blue--;
-    }
-    val--;
+  switch(state){
+    case 0:
+      for(int i = 0; i < NUM_LEDS; i++){
+        leds[i] = blend(leds[i],foreColor,5);
+      }
+      break;
+    case 1:
+      for(int i = 0; i < NUM_LEDS; i++){
+        leds[i] = blend(leds[i],backColor,5);
+      }
     break;
   }
+  val++;
   FastLED.show();
   prevcomd = "Color Fade";
 }
 
-void setAllColor1(){
-  for(int i = 0; i < NUM_LEDS; i++){
-    leds[i].setRGB(fore_G, fore_R, fore_B);
-  }  
-  FastLED.show();
-}
-
-void setAllColor2(){
-  for (int i = 0; i < NUM_LEDS; i++){
-    leds[i].setRGB(back_G, back_R, back_B);
-  }
-  FastLED.show();
-}
-
 void SinglePixel(){
-  leds[pix].setRGB(fore_G, fore_R, fore_B);
+  leds[pix] = foreColor;
   FastLED.show();
   prevcomd = "";
 }
