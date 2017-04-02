@@ -1,0 +1,8 @@
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\bin\Debug\DIY Smart LEDS v1.4.exe.config
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\obj\Debug\DIY Smart LEDS v1.4.exe
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\obj\Debug\DIY Smart LEDS v1.4.pdb
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\bin\Debug\DIY Smart LEDS v1.4.exe
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\bin\Debug\DIY Smart LEDS v1.4.pdb
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\obj\Debug\DIY_LEDS_V1.Controller_Window.resources
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\obj\Debug\DIY_LEDS_V1.Properties.Resources.resources
+G:\DIY_LEDS_V1.4\DIY_LEDS_V1\obj\Debug\DIY_LEDS_V1.4.csproj.GenerateResource.Cache

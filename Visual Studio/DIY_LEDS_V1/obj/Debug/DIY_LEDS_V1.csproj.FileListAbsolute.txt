@@ -1,0 +1,9 @@
+c:\users\daniel\documents\visual studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\bin\Debug\DIY_LEDS_V1.exe.config
+c:\users\daniel\documents\visual studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\bin\Debug\DIY_LEDS_V1.exe
+c:\users\daniel\documents\visual studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\bin\Debug\DIY_LEDS_V1.pdb
+c:\users\daniel\documents\visual studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\obj\Debug\DIY_LEDS_V1.csprojResolveAssemblyReference.cache
+c:\users\daniel\documents\visual studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\obj\Debug\DIY_LEDS_V1.Controller_Window.resources
+c:\users\daniel\documents\visual studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\obj\Debug\DIY_LEDS_V1.Properties.Resources.resources
+c:\users\daniel\documents\visual studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\obj\Debug\DIY_LEDS_V1.csproj.GenerateResource.Cache
+c:\users\daniel\documents\visual studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\obj\Debug\DIY_LEDS_V1.exe
+c:\users\daniel\documents\visual studio 2013\Projects\DIY_LEDS_V1\DIY_LEDS_V1\obj\Debug\DIY_LEDS_V1.pdb
