@@ -92,6 +92,8 @@ void loop(){
       r = constrain(r,0,255);
       g = constrain(g,0,255);
       b = constrain(b,0,255);
+      leds[pix] = CRGB(r,g,b);
+      FastLED.show();
       Serial.flush();
       Serial.println("OK\n"); 
     }
@@ -290,10 +292,6 @@ void loop(){
       prevTime = currentTime;
       ColorCycle();
     }
-  }
-
-  if(command == "Pixel"){
-    SinglePixel();
   }
 }    
 
@@ -592,9 +590,4 @@ void ColorFade(){
   prevcomd = "Color Fade";
 }
 
-void SinglePixel(){
-  leds[pix] = foreColor;
-  FastLED.show();
-  prevcomd = "";
-}
 
