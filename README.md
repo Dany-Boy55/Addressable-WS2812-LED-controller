@@ -19,5 +19,7 @@ New features on V1.4:
 New features on V1.5:
 * Added "Color Gradient" and "Color Fade" effects
 * Improved stability for the arduino sketch and fixed some overflow errors
+* Extended the rate from 0-20 to 0-50 to allow for faster/slower effects
+* Improved the color calculations in the arduino for smoother transitions
 
 Thanks for checking this project out! If you have any ideas for improvements or more features, let me know!
