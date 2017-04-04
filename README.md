@@ -24,4 +24,8 @@ New features on V1.5:
 * Extended the rate from 0-20 to 0-50 to allow for faster/slower effects
 * Improved the color calculations in the arduino for smoother transitions
 
+Goals going forward:
+* Add hardware reacitveness; have the LEDs react to CPU or GPU temps, loads, etc
+* Add sound reactiveness; make the LEDs a real time audio indicator
+
 Thanks for checking this project out! If you have any ideas for improvements or more features, let me know!
