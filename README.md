@@ -5,7 +5,7 @@ If your intent is to simply download and use, then you want to get the .ino sket
 Install the FastLED library into your arduino IDE and upload the sketch. Make necessary adjustments to the sketch.
 Open the .exe file within the App folder and you are ready to go!
 
-For those of you interested in the code, then the Visual Studio folder contains all the resources you need to open the solution on MS visual studio. Feel free to modify the app to your liking.
+For those of you interested in the code, then the Visual Studio folder contains all the resources you need to open the solution on MS visual studio. Feel free to modify the app to your liking. You can find a breif youtube demo here: https://www.youtube.com/watch?v=55OrRJvSOvo
 
 Improvements from 1.0 to 1.3 were not documented, so uhm yeah. 
 
@@ -25,7 +25,8 @@ New features on V1.5:
 * Improved the color calculations in the arduino for smoother transitions
 
 Goals going forward:
-* Add hardware reacitveness; have the LEDs react to CPU or GPU temps, loads, etc
-* Add sound reactiveness; make the LEDs a real time audio indicator
+* Add hardware reacitveness; have the LEDs react to CPU or GPU temps, loads, etc (coming friday april 7th)
+* Add sound reactiveness; make the LEDs a real time audio indicator (no projected date yet)
+* Redesign and simplify UI (no date yet) 
 
 Thanks for checking this project out! If you have any ideas for improvements or more features, let me know!
