@@ -2,15 +2,17 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Threading;               //Enables the use of sleep(), which even though I know should be avoided is simple and works
+using System.Threading;               //Enables the use of sleep(), used to give proper timing to background workers
 using System.Xml;                     //Enables the app to store and retrieve user settings in an XML file
 using System.Timers;                  //Used for recurring functions that requiere a certain timing
 using System.IO.Ports;                //For communicaation with the arduino through an serial port
+using OpenHardwareMonitor.Hardware;
 
 namespace DIY_LEDS_V1
 {    
     public partial class Controller_Window : Form
     {
+        Computer thisPC;
         System.Timers.Timer graphicRefresh;
         SerialPort arduino = new SerialPort("COM1", 19200);
         BackgroundWorker graphics_Updater = new BackgroundWorker();
@@ -20,14 +22,19 @@ namespace DIY_LEDS_V1
         Color foreColor, backColor, calcColor;
         String effect = "Off", controller;
         bool useNext = false, bounce = false, controllerAvailable = false, addressable = false, pixelChange = false, setDefaultChange = false, getData = false;
-        bool color1Change = false, color2Change = false, patternChange = false, rateChange = false, pixelColor1Change = false, pixelColor2Change = false;
-        int rate = 5, hue = 0, controllerIndex = 0, leds = 1, pixel = 1, colorOrder = 0;
+        bool color1Change = false, color2Change = false, patternChange = false, rateChange = false, pixelColor1Change = false, pixelColor2Change = false, HWupdate = false;
+        int rate = 5, hue = 0, controllerIndex = 0, leds = 1, pixel = 1, colorOrder = 0, cpuTemp, gpuTemp, cpuUtil, gpuUtil;
         
         public Controller_Window() //initialize all of the necesary elements for the app
         {
+            thisPC = new Computer();            //create a new instance of the computer object from open hardware monitor in order to get hardware info
+            thisPC.CPUEnabled = true;           //indicate we want to get CPU and GPU information
+            thisPC.GPUEnabled = true;
+            thisPC.Open();
+            
             InitializeComponent();
             pattern_Select.SelectedIndex = 0;            //set the default pattern to Off
-            ColorOrderBox.SelectedIndex = 0;
+            ColorOrderBox.SelectedIndex = 0;             //set the default color order to RGB
 
             graphicRefresh = new System.Timers.Timer(33);                           //Set the timer to every 33 ms, or roughly 30FPS
             graphicRefresh.AutoReset = true;                                        //Set autoReset to true so that the timer repeats periodically
@@ -128,9 +135,11 @@ namespace DIY_LEDS_V1
         private void pattern_Select_SelectedIndexChanged(object sender, EventArgs e)    //Take appropiate action when the dropdown menu box gets a user input
         {
             effect = pattern_Select.SelectedItem.ToString();                           //Load the Name of the selected item into the "Pattern" variable, since that is what it is
-            if(controllerAvailable)
-            patternChange = true;                                                       //Tell the code that the LED pattern needs to be updated to the physical controller
-            safeAsync(LEDWritter, true);                                                //Activate the backgorund thread that handles the interfacing with the actual controller
+            if (controllerAvailable)
+            {
+                patternChange = true;                                                       //Tell the code that the LED pattern needs to be updated to the physical controller
+                safeAsync(LEDWritter, true);                                                //Activate the backgorund thread that handles the interfacing with the actual controller
+            }
             switch (effect){                               //This switch takes appropriate action depending on the pattern selected
                 case "Off":
                     safeAsync(graphics_Updater, false);     //All of the effects that dont require color calculations stop the "graphis_Updater" worker
@@ -196,9 +205,20 @@ namespace DIY_LEDS_V1
                     SetAllPixels(Color.Black);
                     safeAsync(graphics_Updater, false);
                     break;
+                case "CPU temperature":
+                    safeAsync(graphics_Updater, false);
+                    break;
+                case "CPU utilization":
+                    safeAsync(graphics_Updater, false);
+                    break;
+                case "GPU temperature":
+                    safeAsync(graphics_Updater, false);
+                    break;
+                case "GPU utilization":
+                    safeAsync(graphics_Updater, false);
+                    break;
                 default:
                     safeAsync(graphics_Updater, false);
-                    effect = "Off";
                     break;
             }
             setControls();              //This function is called in order to either show or hide controls from the user interface as necessary
@@ -535,7 +555,7 @@ namespace DIY_LEDS_V1
 
         private void LEDWritter_DoWork(object sender, DoWorkEventArgs e)    //This background Worker is used to communicate with the led controller asynchronously in order to mantain a responsive UI
         {
-            Thread.Sleep(1);
+            Thread.Sleep(10);
             if(LEDWritter.CancellationPending && !controllerAvailable){               //Only go throught the serial sequences is there is a controller connected and the worker should be running
                 e.Cancel = true;
             }
@@ -571,7 +591,7 @@ namespace DIY_LEDS_V1
                     }
                     if ("OK" == controllers[controllerIndex].WriteSerial("Pixel," + (pixel - 1) + "," + color));       //Write the actual data, which consists of the pixel number, plus the RGB color values, the write function returns whatever the controller sends back
                         pixelChange = false;        //if the controller responds with an "OK", then we know that the attribute has been updated. Otherwise, the variable remains true and another attempt is made in the next cycle
-                    Thread.Sleep(50);               //Give enough time for the controller to aknowledge the new instructions
+                    Thread.Sleep(100);               //Give enough time for the controller to aknowledge the new instructions
                 }
                 if (getData)                //Read the settings from the current controller (still in progress)
                 {
@@ -582,17 +602,58 @@ namespace DIY_LEDS_V1
                         Console.Write(item + "\t");
                     }
                 }
+                if (HWupdate)
+                {
+                    String returnMessage = "";
+                    switch (effect)
+                    {
+                        case "CPU temperature":
+                            returnMessage = controllers[controllerIndex].WriteSerial("Fill Gradient," + (int)controllers[controllerIndex].leds * cpuTemp / 100);
+                            break;
+                        case "CPU utilization":
+                            returnMessage = controllers[controllerIndex].WriteSerial("Fill Gradient," + (int)controllers[controllerIndex].leds * cpuUtil / 100);
+                            break;
+                        case "GPU temperature":
+                            returnMessage = controllers[controllerIndex].WriteSerial("Fill Gradient," + (int)controllers[controllerIndex].leds * gpuTemp / 100);
+                            break;
+                        case "GPU utilization":
+                            returnMessage = controllers[controllerIndex].WriteSerial("Fill Gradient," + (int)controllers[controllerIndex].leds * gpuUtil / 100);
+                            break;
+                    }
+                    if (returnMessage == "OK")
+                        HWupdate = false;
+                    Thread.Sleep(100);
+                }
+                    
                 if (patternChange)          //Update the LED effect 
                 {
                     //Console.WriteLine("pattern");     //Used for debugging
-                    String text;
-                    text = controllers[controllerIndex].WriteSerial(effect);
-                    if(bounce){
-                        controllers[controllerIndex].WriteSerial(" Bounce");
+                    String returnMessage = ""; 
+                    switch(effect)
+                    {
+                        case "CPU temperature":
+                            returnMessage = controllers[controllerIndex].WriteSerial("Fill Gradient," + (int)controllers[controllerIndex].leds * cpuTemp / 100);
+                            break;
+                        case "CPU utilization":
+                            returnMessage = controllers[controllerIndex].WriteSerial("Fill Gradient," + (int)controllers[controllerIndex].leds * cpuUtil / 100);
+                            break;
+                        case "GPU temperature":
+                            returnMessage = controllers[controllerIndex].WriteSerial("Fill Gradient," + (int)controllers[controllerIndex].leds * gpuTemp / 100);
+                            break;
+                        case "GPU utilization":
+                            returnMessage = controllers[controllerIndex].WriteSerial("Fill Gradient," + (int)controllers[controllerIndex].leds * gpuUtil / 100);
+                            break;
+                        default:
+                            returnMessage = controllers[controllerIndex].WriteSerial(effect);
+                            if (bounce)
+                                controllers[controllerIndex].WriteSerial(" Bounce");
+                            break;
                     }
-                    if(text == "OK")
+                        
+                    
+                    if(returnMessage == "OK")
                         patternChange = false;
-                    Thread.Sleep(50);
+                    Thread.Sleep(100);
                 }
                 if (color1Change)       //Update the foreground color in the controller
                 {
@@ -624,7 +685,7 @@ namespace DIY_LEDS_V1
                     }
                     if("OK" == controllers[controllerIndex].WriteSerial(color))     //If the controller replies with "OK" we know all is good
                         color1Change = false;   //Set this variable false becasue we know the update was succesful
-                    Thread.Sleep(50);          //Give the controller some time to react and be ready for the next command
+                    Thread.Sleep(100);          //Give the controller some time to react and be ready for the next command
                 }
                 if (color2Change)
                 {
@@ -656,7 +717,7 @@ namespace DIY_LEDS_V1
                     }
                     if ("OK" == controllers[controllerIndex].WriteSerial(color))
                         color2Change = false;
-                    Thread.Sleep(50);
+                    Thread.Sleep(100);
                 }
                 if (rateChange)
                 {
@@ -664,14 +725,14 @@ namespace DIY_LEDS_V1
                     String r = "Rate," + rate;
                     if("OK" == controllers[controllerIndex].WriteSerial(r))
                         rateChange = false;
-                    Thread.Sleep(50);
+                    Thread.Sleep(100);
                 }
                 if (setDefaultChange)
                 {
                     //Console.WriteLine("default");     //for debugging
                     if ("OK" == controllers[controllerIndex].WriteSerial("Save Default"))
                         setDefaultChange = false;
-                    Thread.Sleep(50);
+                    Thread.Sleep(100);
                 }
                 if (pixelColor1Change)
                 {
@@ -702,7 +763,7 @@ namespace DIY_LEDS_V1
                     }
                     controllers[controllerIndex].WriteSerial("Pixel," + (pixel - 1) + "," +color);
                     pixelColor1Change = false;
-                    Thread.Sleep(50);
+                    Thread.Sleep(100);
                 }
                 if (pixelColor2Change)
                 {
@@ -733,7 +794,7 @@ namespace DIY_LEDS_V1
                     }
                     controllers[controllerIndex].WriteSerial("Pixel," + (pixel - 1) + "," + color);
                     pixelColor2Change = false;
-                    Thread.Sleep(50);
+                    Thread.Sleep(100);
                 }
             }
         }
@@ -800,6 +861,18 @@ namespace DIY_LEDS_V1
                 case ("Rainbow"):
                     RainbowPixels(hue, 7);
                     break;
+                case "CPU temperature":
+                    Fill_Partial_Gradient(foreColor, backColor, cpuTemp / 10);
+                    break;
+                case "CPU utilization":
+                    Fill_Partial_Gradient(foreColor, backColor, cpuUtil / 10);
+                    break;
+                case "GPU temperature":
+                    Fill_Partial_Gradient(foreColor, backColor, gpuTemp / 10);
+                    break;
+                case "GPU utilization":
+                    Fill_Partial_Gradient(foreColor, backColor, gpuUtil / 10);
+                    break;
                 case "Custom Pattern":
                     safeAsync(graphics_Updater, false);
                     break;
@@ -836,8 +909,32 @@ namespace DIY_LEDS_V1
                 pixel8.BackColor = ColorFromHSV(starthue - 7 * huestep, 1, 1);
                 pixel9.BackColor = ColorFromHSV(starthue - 8 * huestep, 1, 1);
                 pixel10.BackColor = ColorFromHSV(starthue - 9 * huestep, 1, 1);
-            }
-            
+            }            
+        }
+
+        private void PixelFill(Color target, int pixNum)
+        {
+            SetAllPixels(Color.Black);
+            if(pixNum >= 1)
+                pixel1.BackColor = target;
+            if (pixNum >= 2)
+                pixel2.BackColor = target;
+            if (pixNum >= 3)
+                pixel3.BackColor = target;
+            if (pixNum >= 4)
+                pixel4.BackColor = target;
+            if (pixNum >= 5)
+                pixel5.BackColor = target;
+            if (pixNum >= 6)
+                pixel6.BackColor = target;
+            if (pixNum >= 7)
+                pixel7.BackColor = target;
+            if (pixNum >= 8)
+                pixel8.BackColor = target;
+            if (pixNum >= 9)
+                pixel9.BackColor = target;
+            if (pixNum >= 10)
+                pixel10.BackColor = target;
         }
 
         private void setControls()      //This function handles the controls displauyed by the user interface
@@ -845,11 +942,8 @@ namespace DIY_LEDS_V1
             bouceEnabled.Enabled = false;
             numericLEDNumber.Enabled = false;
             ColorOrderBox.Enabled = false;
-            label1.Enabled = false;
-            label2.Enabled = false;
             pixelSetColor1_Button.Enabled = false;
             pixelSetColor2_Button.Enabled = false;
-            GetData_Button.Enabled = false;
             
             if (effect.Contains("Rainbow") || effect == "Off") Color1_Button.Enabled = false;
                 else Color1_Button.Enabled = true;
@@ -857,7 +951,7 @@ namespace DIY_LEDS_V1
             if (effect == "Rainbow" || effect == "Rainbow Breathe" || effect.Contains("Cycle") || effect == "Off" || effect.Contains("Fixed")) Color2_Button.Enabled = false;
                 else Color2_Button.Enabled = true;
 
-            if (effect.Contains("Gradient") || effect.Contains("Fixed") || effect.Contains("Off") || effect.Contains("Custom"))
+            if (effect.Contains("Gradient") || effect.Contains("Fixed") || effect.Contains("Off") || effect.Contains("Custom") || effect.Contains("PU"))
             {
                 numericRateBox.Enabled = false;
                 rate_TrackBar.Enabled = false;
@@ -871,7 +965,6 @@ namespace DIY_LEDS_V1
             
             if (effect.Contains("Custom"))
             {
-                label2.Enabled = true;
                 pixelSetColor1_Button.Enabled = true;
                 pixelSetColor2_Button.Enabled = true;
                 if (controllerAvailable)
@@ -890,7 +983,6 @@ namespace DIY_LEDS_V1
             if (controllerAvailable)
             {
                 ColorOrderBox.Enabled = true;
-                GetData_Button.Enabled = true;
             }
         }        
 
@@ -898,8 +990,11 @@ namespace DIY_LEDS_V1
         {
             try                         //The try/catch structure is used in case the controllers array has not yet been created
             {
-                foreach (SerialDevice item in controllers)      //Get rid of all the existing serial ports in the controllers array 
+                foreach (SerialDevice item in controllers)
+                {      
+                    item.SafePortOpenClose(false);              //Get rid of all the existing serial ports in the controllers array 
                     item.port.Dispose();                        //this is done so that we dont get an execption later when trying to access a port if it is already assigned to a controller
+                }
             }
             catch { }
             int numPorts = SerialPort.GetPortNames().Length;        //Get the number of serial ports in a variable to be used for various checks later
@@ -908,7 +1003,6 @@ namespace DIY_LEDS_V1
             {
                 SerialDevice temp = new SerialDevice();         //Create a temporary SerialDevice object to which all the data will be loaded
                 temp.Initilize(SerialPort.GetPortNames()[i]);   //Set the serial port to the current one iterating in the loop
-                temp.port.ReadTimeout = 70;                     //Set the serial read timeout to have some wiggle room with the serial communication timing
                 controllers[i] = temp;                          //load all of the properties of the temporary object into an element of the public array
                 //Console.WriteLine("COM port found in : " + controllers[i].port.PortName);       //For debugging
             }
@@ -939,6 +1033,12 @@ namespace DIY_LEDS_V1
                 return Color.FromArgb(255, v, p, q);
         }
 
+        private void runInBackgroundToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.ShowInTaskbar = false;
+            this.Hide();
+        }
+
         private void SetAllPixels(Color color)      //Set all of the buttons representing pixels to the same color
         {
             pixel1.BackColor = color;
@@ -951,6 +1051,35 @@ namespace DIY_LEDS_V1
             pixel8.BackColor = color;
             pixel9.BackColor = color;
             pixel10.BackColor = color;
+        }
+
+        private void alwaysOnTopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.TopMost = !this.TopMost;
+            alwaysOnTopToolStripMenuItem.Checked = this.TopMost;
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void hideToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            this.ShowInTaskbar = false;
+        }
+
+        private void showToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Show();
+            this.ShowInTaskbar = true;
+        }
+
+        private void reactiveEffectToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            effect = e.ClickedItem.Text;
+            pattern_Select.SelectedItem = effect;
         }
 
         private void RainbowPixels(double initialhue, int dispersion)       //Set a spectrum pattern on the buttons representing pixels
@@ -970,6 +1099,122 @@ namespace DIY_LEDS_V1
         private void Controller_Window_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void Fill_Partial_Gradient(Color startColor, Color endColor, int upToPixel)
+        {
+
+            float starthue = startColor.GetHue();
+            float endhue = endColor.GetHue();
+            float huestep = (Math.Abs(endhue - starthue)) / 9;
+            if (starthue < endhue)
+            {
+                SetAllPixels(Color.Black);
+                if (upToPixel >= 1)
+                    pixel1.BackColor = startColor; ;
+                if (upToPixel >= 2)
+                    pixel2.BackColor = ColorFromHSV(starthue + huestep, 1, 1); ;
+                if (upToPixel >= 3)
+                    pixel3.BackColor = ColorFromHSV(starthue + 2 * huestep, 1, 1);
+                if (upToPixel >= 4)
+                    pixel4.BackColor = ColorFromHSV(starthue + 3 * huestep, 1, 1);
+                if (upToPixel >= 5)
+                    pixel5.BackColor = ColorFromHSV(starthue + 4 * huestep, 1, 1);
+                if (upToPixel >= 6)
+                    pixel6.BackColor = ColorFromHSV(starthue + 5 * huestep, 1, 1);
+                if (upToPixel >= 7)
+                    pixel7.BackColor = ColorFromHSV(starthue + 6 * huestep, 1, 1);
+                if (upToPixel >= 8)
+                    pixel8.BackColor = ColorFromHSV(starthue + 7 * huestep, 1, 1);
+                if (upToPixel >= 9)
+                    pixel9.BackColor = ColorFromHSV(starthue + 8 * huestep, 1, 1);
+                if (upToPixel >= 10)
+                    pixel10.BackColor = ColorFromHSV(starthue + 9 * huestep, 1, 1);
+            }
+            else
+            {
+                SetAllPixels(Color.Black);
+                if (upToPixel >= 1)
+                    pixel1.BackColor = startColor; ;
+                if (upToPixel >= 2)
+                    pixel2.BackColor = ColorFromHSV(starthue - huestep, 1, 1); ;
+                if (upToPixel >= 3)
+                    pixel3.BackColor = ColorFromHSV(starthue - 2 * huestep, 1, 1);
+                if (upToPixel >= 4)
+                    pixel4.BackColor = ColorFromHSV(starthue - 3 * huestep, 1, 1);
+                if (upToPixel >= 5)
+                    pixel5.BackColor = ColorFromHSV(starthue - 4 * huestep, 1, 1);
+                if (upToPixel >= 6)
+                    pixel6.BackColor = ColorFromHSV(starthue - 5 * huestep, 1, 1);
+                if (upToPixel >= 7)
+                    pixel7.BackColor = ColorFromHSV(starthue - 6 * huestep, 1, 1);
+                if (upToPixel >= 8)
+                    pixel8.BackColor = ColorFromHSV(starthue - 7 * huestep, 1, 1);
+                if (upToPixel >= 9)
+                    pixel9.BackColor = ColorFromHSV(starthue - 8 * huestep, 1, 1);
+                if (upToPixel >= 10)
+                    pixel10.BackColor = ColorFromHSV(starthue - 9 * huestep, 1, 1);
+            }
+        }
+
+        private void HWtimer_Tick(object sender, EventArgs e)
+        {
+            if (controllerAvailable)
+                HWupdate = true;
+            foreach(IHardware component in thisPC.Hardware)
+            {
+                component.Update();
+                if(component.HardwareType == HardwareType.CPU)
+                {
+                    label5.Text = component.Name;
+                    foreach (ISensor sens in component.Sensors)
+                    {
+                        if (sens.SensorType == SensorType.Temperature)
+                        {
+                            cpuTemp = (int) sens.Value;
+                            label6.Text = "CPU temp: " + String.Concat(cpuTemp) + "°C";
+                        }     
+                        if(sens.SensorType == SensorType.Load)
+                        {
+                            cpuUtil = (int) sens.Value;
+                            label9.Text = "CPU util: " + String.Concat(cpuUtil) + "%";
+                        }                       
+                    }
+                }
+                if (component.HardwareType == HardwareType.GpuNvidia)
+                {
+                    label7.Text = component.Name;
+                    foreach (ISensor sens in component.Sensors)
+                    {
+                        if (sens.SensorType == SensorType.Temperature)
+                        {
+                            gpuTemp = (int) sens.Value;
+                            label8.Text = "GPU temp: " + String.Concat(gpuTemp);
+                        }
+                        if (sens.SensorType == SensorType.Load)
+                        {
+                            gpuUtil = (int)sens.Value;
+                            label10.Text = "GPU util: " + String.Concat(gpuUtil);
+                        }
+                    }
+                }
+                if(component.HardwareType == HardwareType.GpuAti)
+                {
+                    label7.Text = component.Name;
+                    foreach(ISensor sens in component.Sensors)
+                    {
+                        if(sens.SensorType == SensorType.Temperature)
+                        {
+                            gpuTemp = (int)sens.Value;
+                            label8.Text = "GPU temp" + String.Concat(gpuTemp);
+                        }
+                        if (sens.SensorType == SensorType.Load)
+                        {
+                            gpuUtil = (int)sens.Value;
+                        }
+                    }
+                }
+            }
         }
 
         private void ColorOrderBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -1039,23 +1284,7 @@ namespace DIY_LEDS_V1
                         //Console.WriteLine("add: {0} numleds: {1} name: {2}", addressable, leds, controllers[i].controllerName);   //Used for debugging
                         Devices_ComboBox.Enabled = false;           //Disable the combo box so that the selected controller can't be changed inproperly
                         Connect_Button.Text = "Disconnect";         //Change the text on the button to give the user the option to de-select the current controller
-                        foreach(XmlNode node in xmlDoc.ChildNodes[1])
-                        {
-                            if(node.Name == "Config" && node.Attributes["Name"].Value == controllers[i].controllerName)
-                            {
-                                rate = Int32.Parse(node.Attributes["Rate"].Value);
-                                rate_TrackBar.Value = rate;
-                                numericRateBox.Value = (decimal)rate;
-                                foreColor = Color.FromArgb(Int32.Parse(node.Attributes["ForeColor"].Value));
-                                backColor = Color.FromArgb(Int32.Parse(node.Attributes["BackColor"].Value));
-                                colorOrder = Int32.Parse(node.Attributes["Order"].Value);
-                                Color1_Button.BackColor = foreColor;
-                                Color2_Button.BackColor = backColor;
-                                pattern_Select.SelectedItem = node.Attributes["Pattern"].Value;
-                                if (node.Attributes["Bounce"].Value == "True")
-                                    bouceEnabled.Checked = true;
-                            }
-                        }
+                        label13.Text = leds + " found ";
                         break;                                                           
                     }
                 }                
@@ -1293,6 +1522,9 @@ namespace DIY_LEDS_V1
         {
             ScanSerialDevices();                            //Make sure we can check all of the serial ports by filling the controllers array with serial ports
             Devices_ComboBox.Items.Clear();                 //Clear the box that enables the selection of controllers to prepare it for the incomming ones (if any)
+            Devices_ComboBox.Enabled = false;
+            Connect_Button.Text = "Scanning";
+            Connect_Button.Enabled = false;
             foreach (SerialDevice item in controllers)      //Iterate through all of the elements of the controllers array to check if they contain a valid device
             {
                 switch (item.Scan())         //The scan function actually performs all of the serial handshaking
@@ -1302,6 +1534,9 @@ namespace DIY_LEDS_V1
                         break;
                 }
             }
+            Devices_ComboBox.Enabled = true;
+            Connect_Button.Enabled = true;
+            Connect_Button.Text = "Connect";
             setControls();              //Update all the UI elements to match the current controllers
             if (Devices_ComboBox.Items.Count > 0)           //If any controllers were found in the process
                 Devices_ComboBox.SelectedIndex = 0;         //Make the selection box "highlight" the first one on the list
@@ -1481,8 +1716,8 @@ namespace DIY_LEDS_V1
         public void Initilize(String portName)
         {
             port = new SerialPort(portName, 19200);
-            port.ReadTimeout = 100;
-            port.WriteTimeout = 100;
+            port.ReadTimeout = 70;
+            port.WriteTimeout = 70;
         }
 
         public String GetData()
@@ -1495,14 +1730,21 @@ namespace DIY_LEDS_V1
             try
             {
                 SafePortOpenClose(true);
-                port.Write("id");
-                String[] data = port.ReadLine().Split(',');
+                String[] data = { "","","",""};
+                for (int i = 0; i < 5; i++)                    
+                {
+                    port.Write("id");
+                    data = port.ReadLine().Split(',');
+                    if (data[1].Contains("addressable") || data[1].Contains("simple"))
+                        break;
+                    Thread.Sleep(50);
+                }
+                SafePortOpenClose(false);
                 version = data[0];
                 ledType = data[1];
                 if (ledType == "addressable") addressable = true;
                 controllerName = data[2];
                 leds = Int32.Parse(data[3]);
-                SafePortOpenClose(false);
                 return "OK";
             }
             catch(TimeoutException)

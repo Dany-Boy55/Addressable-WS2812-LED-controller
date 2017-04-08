@@ -1,0 +1,19 @@
+E:\Daniel Rivera\Documents\Visual Studio 2015\Projects\DIY_LEDSv1.6\DIY_LEDS_V1\bin\Release\OpenHardwareMonitorLib.dll
+E:\Daniel Rivera\Documents\Visual Studio 2015\Projects\DIY_LEDSv1.6\DIY_LEDS_V1\bin\Release\LED controller.exe.config
+E:\Daniel Rivera\Documents\Visual Studio 2015\Projects\DIY_LEDSv1.6\DIY_LEDS_V1\bin\Release\LED controller.exe
+E:\Daniel Rivera\Documents\Visual Studio 2015\Projects\DIY_LEDSv1.6\DIY_LEDS_V1\bin\Release\LED controller.pdb
+E:\Daniel Rivera\Documents\Visual Studio 2015\Projects\DIY_LEDSv1.6\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.6.csprojResolveAssemblyReference.cache
+E:\Daniel Rivera\Documents\Visual Studio 2015\Projects\DIY_LEDSv1.6\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Controller_Window.resources
+E:\Daniel Rivera\Documents\Visual Studio 2015\Projects\DIY_LEDSv1.6\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Properties.Resources.resources
+E:\Daniel Rivera\Documents\Visual Studio 2015\Projects\DIY_LEDSv1.6\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.6.csproj.GenerateResource.Cache
+E:\Daniel Rivera\Documents\Visual Studio 2015\Projects\DIY_LEDSv1.6\DIY_LEDS_V1\obj\Release\LED controller.exe
+E:\Daniel Rivera\Documents\Visual Studio 2015\Projects\DIY_LEDSv1.6\DIY_LEDS_V1\obj\Release\LED controller.pdb
+C:\Users\Daniel\Desktop\DIY_LEDSv1.6\DIY_LEDS_V1\bin\Release\LED controller.exe.config
+C:\Users\Daniel\Desktop\DIY_LEDSv1.6\DIY_LEDS_V1\obj\Release\LED controller.exe
+C:\Users\Daniel\Desktop\DIY_LEDSv1.6\DIY_LEDS_V1\obj\Release\LED controller.pdb
+C:\Users\Daniel\Desktop\DIY_LEDSv1.6\DIY_LEDS_V1\bin\Release\OpenHardwareMonitorLib.dll
+C:\Users\Daniel\Desktop\DIY_LEDSv1.6\DIY_LEDS_V1\bin\Release\LED controller.exe
+C:\Users\Daniel\Desktop\DIY_LEDSv1.6\DIY_LEDS_V1\bin\Release\LED controller.pdb
+C:\Users\Daniel\Desktop\DIY_LEDSv1.6\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Controller_Window.resources
+C:\Users\Daniel\Desktop\DIY_LEDSv1.6\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.Properties.Resources.resources
+C:\Users\Daniel\Desktop\DIY_LEDSv1.6\DIY_LEDS_V1\obj\Release\DIY_LEDS_V1.6.csproj.GenerateResource.Cache

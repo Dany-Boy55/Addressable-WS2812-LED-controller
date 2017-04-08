@@ -48,3 +48,9 @@ C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\bin\
 C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.pdb
 C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.exe.manifest
 C:\Users\Daniel Rivera\Desktop\LED controller all\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.application
+C:\Users\Daniel\Desktop\Visual Studio\DIY_LEDS_V1\bin\Release\LED controller.exe.config
+C:\Users\Daniel\Desktop\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.exe
+C:\Users\Daniel\Desktop\Visual Studio\DIY_LEDS_V1\obj\Release\LED controller.pdb
+E:\Daniel Rivera\Documents\Visual Studio 2015\Projects\DIY_LEDSv1.6\DIY_LEDS_V1\bin\Release\LED controller.exe.config
+E:\Daniel Rivera\Documents\Visual Studio 2015\Projects\DIY_LEDSv1.6\DIY_LEDS_V1\obj\Release\LED controller.exe
+E:\Daniel Rivera\Documents\Visual Studio 2015\Projects\DIY_LEDSv1.6\DIY_LEDS_V1\obj\Release\LED controller.pdb
