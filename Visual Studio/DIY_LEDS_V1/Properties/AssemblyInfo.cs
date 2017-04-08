@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using OpenHardwareMonitor;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
