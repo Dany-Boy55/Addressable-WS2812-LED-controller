@@ -24,9 +24,17 @@ New features on V1.5:
 * Extended the rate from 0-20 to 0-50 to allow for faster/slower effects
 * Improved the color calculations in the arduino for smoother transitions
 
+New features on V1.7:
+* Added functionality to run the app in the backgorund with the help of a system tray icon (for hardwa monitoring)
+* Added hardware monitoring options for CPU and GPU (temperature and utilization)
+* Improved connectivity with the controller (should result in faster and more effective identification and communication)
+* Added a menu bar, the app can now run on top at all times
+* User setttings are now saved from the app at exit, not only when requested by the user
+* Improved functionality when scanning for LED controllers, the app will now scan 5 times in succession, hopefully resulting in better controller recognitions
+
 Goals going forward:
-* Add hardware reacitveness; have the LEDs react to CPU or GPU temps, loads, etc (coming friday april 7th)
-* Add sound reactiveness; make the LEDs a real time audio indicator (no projected date yet)
-* Redesign and simplify UI (no date yet) 
+* Add sound reactiveness; make the LEDs a real time audio indicator (no significant progress yet)
+* Redesign and simplify UI (no date yet)
+* Redesign the back-end for both the app and the arduino to provide better responsiveness (end of April)
 
 Thanks for checking this project out! If you have any ideas for improvements or more features, let me know!
