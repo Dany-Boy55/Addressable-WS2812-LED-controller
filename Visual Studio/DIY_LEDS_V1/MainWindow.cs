@@ -1716,7 +1716,7 @@ namespace DIY_LEDS_V1
         public void Initilize(String portName)
         {
             port = new SerialPort(portName, 19200);
-            port.ReadTimeout = 70;
+            port.ReadTimeout = 200;
             port.WriteTimeout = 70;
         }
 
