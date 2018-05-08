@@ -1,7 +1,7 @@
 # LED controller
 An arduino + windows project to control led strips with ease. Instructables coming soon
 
-## Important notice! Repo will be archived soon! Successor here [OpenRGB](www.github.com/Dany_Boy55/OpenRGB.git)
+## Important notice! Repo will be archived soon! Successor here [OpenRGB](http://www.github.com/Dany_Boy55/OpenRGB.git)
 #### This repo will be archived very soon as I will re-start this project from scratch. I have not really mantained or updgraded de code in a very long while, and looking back, it is full of bad practices and all sorts of fundamental setbacks. Additionally, versioning/documenting was a total mess due to me not really knowing what I was doing. If you still want to use and build upon this repo, you are more than welcome  to do so but be aware it is not really ideal. 
 
 If your intent is to simply download and use, then you want to get the .ino sketch for the arduino and the App.zip folder. 
